@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+
+ <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find messi_bot)/worlds/assessment.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
+    
+    <node name="my_unique_bot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-param robot_description -urdf -model my_unique_bot"/>
+      <arg name="rviz_config_file" default="$(find messi_bot)/config/mobile_bot.rviz"/>
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_file)"/>
+
+
+    <node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
+    <param name="base_frame" value="base_link"/>
+    <param name="odom_frame" value="odom"/>
+    <param name="delta" value="0.1"/>
+    
+ 
+ 
+
+</launch>

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<launch>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find messi_bot)/worlds/assessment.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
+    
+    <node name="my_unique_bot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-param robot_description -urdf -model my_unique_bot"/>
+</launch>
+
+
+  
+
+<!--<launch>
+
+<arg name="camera_enable" default="false"/>
+<arg name="lidar_enable" default="false"/>
+
+<include file="$(find turtlebot3_gazebo)/launch/turtlebot3_empty_world.launch">
+
+</include>
+
+<group if="$(arg camera_enable)">
+    <node name="camera_sensor" pkg="mobile_robot" type="camera_sensor.py" output="screen"/>
+</group>
+
+<group if="$(arg lidar_enable)">
+    <node name="lidar_sensor" pkg="mobile_robot" type="lidar_sensor.py" output="screen"/>
+</group>
+
+</launch>
+-->
