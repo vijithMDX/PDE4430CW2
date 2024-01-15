@@ -5,7 +5,7 @@
 
     <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf" />
 
-    
+  <!-- here it lauach world file -->  
  <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find messi_bot)/worlds/assessment.world"/>
         <arg name="paused" value="false"/>
@@ -14,22 +14,24 @@
         <arg name="headless" value="false"/>
         <arg name="debug" value="false"/>
     </include>
+    <!--includes the defaults objects -->
+    <include file="$(find messi_bot)/launch/objects.launch"/>
 
       <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
-   <!--adding map server-->
+   <!--adding map server load map in rviz-->
     <arg name="map_file" value="$(find messi_bot)/worlds/map_hd.yaml"></arg>
     <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"/>
-
+    <!--Loading robot urdf from arguments-->
     <node name="my_unique_bot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-param robot_description -urdf -model my_unique_bot"/>
       <arg name="rviz_config_file" default="$(find messi_bot)/config/mobile_bot.rviz"/>
       <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_file)"/>
-
+    <!--gmapping node for publishing map data -->
    <node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
     <param name="base_frame" value="base_link"/>
     <param name="odom_frame" value="odom"/>
     <param name="delta" value="0.1"/>
-
+    <!--move base node for slam functionality-->
     <node pkg="move_base" type="move_base" name="Base_move" output="screen">
         <param name="controller_frequency" value="10.0" />
         <rosparam file="$(find messi_bot)/config/costmap_common_params.yaml" command="load" ns="global_costmap"/>

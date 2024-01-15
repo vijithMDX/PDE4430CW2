@@ -9,11 +9,11 @@
         <arg name="headless" value="false"/>
         <arg name="debug" value="false"/>
     </include>
-
+ <!--includes the defaults objects -->
 <include file="$(find messi_bot)/launch/objects.launch"/>
 
 
-
+<!--Loading robot urdf from arguments-->
 
     <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
     
