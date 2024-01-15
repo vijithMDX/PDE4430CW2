@@ -10,6 +10,11 @@
         <arg name="debug" value="false"/>
     </include>
 
+<include file="$(find messi_bot)/launch/objects.launch"/>
+
+
+
+
     <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
     
     <node name="my_unique_bot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-param robot_description -urdf -model my_unique_bot"/>
