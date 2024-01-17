@@ -4,6 +4,8 @@
 
 
     <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf" />
+   
+  
 
   <!-- here it lauach world file -->  
  <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -23,9 +25,9 @@
     <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"/>
     <!--Loading robot urdf from arguments-->
     <node name="my_unique_bot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-param robot_description -urdf -model my_unique_bot"/>
-      <arg name="rviz_config_file" default="$(find messi_bot)/config/mobile_bot.rviz"/>
+     <!-- <arg name="rviz_config_file" default="$(find messi_bot)/config/mobile_bot.rviz"/>-->
       <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_file)"/>
+    <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_file)"/>-->
     <!--gmapping node for publishing map data -->
    <node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
     <param name="base_frame" value="base_link"/>

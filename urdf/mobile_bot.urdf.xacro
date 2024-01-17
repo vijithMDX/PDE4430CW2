@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<robot name="messi_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--Body dimentions-->
+<xacro:property name="body_link_x_dim" value="1.0"/>
+<xacro:property name="body_link_y_dim" value="0.6"/>
+<xacro:property name="body_link_z_dim" value="0.3"/>
+<!--wheel dimentions -->
+<xacro:property name="wheel_link_radius" value="0.15"/>
+<xacro:property name="wheel_link_length" value="0.1"/>
+<xacro:property name="wheel_link_z_location" value="-0.1"/>
+
+
+<!--material density xacro property-->
+<xacro:property name="body_density" value="2710.0"/>
+<!--Pi constant-->
+<xacro:property name="pi_constant" value="3.14159265"/>
+<!--body mass property-->
+<xacro:property name="body_mass" value="${body_density*body_link_x_dim*body_link_y_dim*body_link_z_dim}"/>
+<xacro:property name="cylindrical_mass"  value="${body_density*pi_constant*wheel_link_radius*wheel_link_radius*wheel_link_length}"/>
+<!--Moments of inertia of wheel with respect to z-->
+<xacro:property name="Iz_wheel" value="${0.5*cylindrical_mass*wheel_link_radius*wheel_link_radius}"/>
+<!--Moments of inertia of wheel with respect to x-->
+<xacro:property name="I_wheel" value="${(1.0/12.0)*cylindrical_mass*(3.0*wheel_link_radius*wheel_link_radius+wheel_link_length*wheel_link_length)}"/>
+
+<!--implement complete inertia into interia section-->
+<xacro:macro name="intertia_wheel">
+<inertial>
+<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    <mass value="0.0"/>
+    <inertia ixx="{I_wheel}" ixy="0.0" ixz="0.0" iyy="${I_wheel}" iyz="0" izz="${Iz_wheel}"/>
+
+</inertial>
+</xacro:macro>
+
+<!--define sudo link-->
+<link name="baseframe_link"/>
+
+    <!-- Base Link -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${body_link_x_dim} ${body_link_y_dim} ${body_link_z_dim}"/> <!-- Halved size -->
+            </geometry>
+            <material name="red">
+                <color rgba="1 0 0"/>
+            </material>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            
+        </visual>
+        <collision>
+            <geometry>  <!-- Gripper control plugin specifics here, if needed -->
+                <box size="${body_link_x_dim} ${body_link_y_dim} ${body_link_z_dim}"/> <!-- Halved size -->
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            
+        </collision>
+        <inertial>
+            <mass value="${body_mass}"/>
+            <inertia ixx="${(1/12)*body_mass*(body_link_y_dim*body_link_y_dim+body_link_z_dim*body_link_z_dim)}" ixy="0" 
+            ixz="0" iyy="${(1/12)*body_mass*(body_link_x_dim*body_link_x_dim+body_link_z_dim*body_link_z_dim)}" iyz="0.0" 
+            izz="${(1/12)*body_mass*(body_link_x_dim*body_link_x_dim+body_link_y_dim*body_link_y_dim)}"/><!-- Adjusted Inertia -->
+        </inertial>
+    </link>
+<!--define sudo joint for gazebo-->
+<joint name="baseframe_joint" type="fixed">
+<parent link="baseframe_link"/>
+<child link="base_link"/>
+
+</joint>
+<!---->
+    
+    <!-- Front castor Wheel -->
+    <link name="front_castor_wheel_link">
+        <visual>
+            <geometry>
+                <cylinder radius="${wheel_link_radius}" length="${wheel_link_length}"/> <!-- Halved size -->
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="${pi_constant} 0.0 0.0"/>
+            
+            <material name="black" />
+            <color rgba="0 0 0"/>
+        </visual>
+        <collision>
+        <origin rpy="${pi_constant} 0.0 0.0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${wheel_link_radius}" length="${wheel_link_length}"/> <!-- Halved size -->
+            </geometry>
+        </collision>
+        <xacro:intertia_wheel/>
+    </link>
+
+    <joint name="front_castor_wheel_joint" type="continuous">
+<axis xyz="0.0 1 0.0"/>
+<limit effort="1000" velocity="1000"/>
+<dynamics damping="1.0" friction="1.0"/>
+
+<parent link="base_link"/>
+<child link="front_castor_wheel_link"/>
+<origin xyz="${body_link_x_dim/2+1.2*wheel_link_radius} 0.0 ${wheel_link_z_location}" rpy="-1.5708 0.0 0.0"/> <!-- Adjusted Position -->
+</joint>
+
+<!-- Right Wheel -->
+<link name="right_wheel_link">
+    <visual>
+    <origin xyz="0.0 0.0 0.0" rpy="1.570795 0.0 0.0"/>
+    
+        <geometry>
+            <cylinder radius="${wheel_link_radius}" length="${wheel_link_length}"/> <!-- Halved size -->
+        </geometry>
+       
+         <material name="black" />
+         <color rgba="0 0 0"/>
+    </visual>
+    <collision>
+    <origin xyz="0.0 0.0 0.0" rpy="1.570795 0.0 0.0"/>
+        <geometry>
+             <cylinder radius="${wheel_link_radius}" length="${wheel_link_length}"/> <!-- Halved size -->
+        </geometry>
+    </collision>
+    <xacro:intertia_wheel/>
+</link>
+
+<joint name="right_wheel_joint" type="continuous">
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="1000" velocity="1000"/>
+    <dynamics damping="1.0" friction="1.0"/>
+    
+    <parent link="base_link"/>
+    <child link="right_wheel_link"/>
+    <origin xyz="${-body_link_x_dim/2+1.2*wheel_link_radius} ${body_link_y_dim/2+wheel_link_length/2} ${wheel_link_z_location}" rpy="0.0 0.0 0.0"/> <!-- Adjusted Position -->
+</joint>
+
+<!-- Left Wheel -->
+<link name="left_wheel_link">
+    <visual>
+    <origin xyz="0.0 0.0 0.0" rpy="1.570795 0.0 0.0"/>
+    
+        <geometry>
+            <cylinder radius="${wheel_link_radius}" length="${wheel_link_length}"/> <!-- Halved size -->
+        </geometry>
+       
+         <material name="black" />
+<color rgba="0 0 0"/>
+    </visual>
+    <collision>
+    <origin xyz="0.0 0.0 0.0" rpy="1.570795 0.0 0.0"/>
+        <geometry>
+             <cylinder radius="${wheel_link_radius}" length="${wheel_link_length}"/> <!-- Halved size -->
+        </geometry>
+    </collision>
+    <xacro:intertia_wheel/>
+</link>
+
+<joint name="left_wheel_joint" type="continuous">
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="1000" velocity="1000"/>
+    <dynamics damping="1.0" friction="1.0"/>
+    
+    <parent link="base_link"/>
+    <child link="left_wheel_link"/>
+    <origin xyz="${-body_link_x_dim/2+1.2*wheel_link_radius} ${-body_link_y_dim/2+wheel_link_length/2} ${wheel_link_z_location}" rpy="0.0 0.0 0.0"/> <!-- Adjusted Position -->
+</joint>
+
+<!-- Gripper Link -->
+ <link name="left_finger">
+        <visual>
+            <geometry>
+                <box size="0.2 0.0025 0.02"/> <!-- Dimensions of the finger -->
+            </geometry>
+            <material name="grey"/>
+            <color rgba="0 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.2 0.0025 0.02"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.01"/>
+            
+           <inertia ixx="1e-6" ixy="0" ixz="0.0" iyy="1e-6" iyz="0.0" izz="1e-6"/>
+        </inertial>
+    </link>
+
+    <!-- Right Finger of Gripper -->
+    <link name="right_finger">
+        <visual>
+            <geometry>
+                <box size="0.2 0.0025 0.02"/> <!-- Dimensions of the finger -->
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.2 0.0025 0.02"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.01"/>
+             
+          <inertia ixx="1e-6" ixy="0" ixz="0.0" iyy="1e-6" iyz="0.0" izz="1e-6"/>
+        </inertial>
+    </link>
+
+    <!-- Joint for Left Finger -->
+   <joint name="right_finger_joint" type="prismatic">
+    <parent link="base_link"/>
+    <child link="right_finger"/>
+    <origin xyz="0.22 -0.13 0.01" rpy="0.0 0.0 0.0"/>
+    <axis xyz="0 1 0"/> <!-- Axis along which the joint extends -->
+    <limit lower="0.0" upper="0.05" effort="10" velocity="0.05"/>
+</joint>
+
+
+    <!-- Joint for Right Finger -->
+  <joint name="left_finger_joint" type="prismatic">
+    <parent link="base_link"/>
+    <child link="left_finger"/>
+    <origin xyz="0.22 0.13 0.01" rpy="0.0 0.0 0.0"/>
+    <axis xyz="0 -1 0"/> <!-- Axis along which the joint extends -->
+    <limit lower="0.0" upper="0.05" effort="10" velocity="0.05"/>
+</joint>
+
+
+
+
+
+<!-- Laser Scanner remains unchanged -->
+ <link name="laser_scanner">
+        <visual>
+            <geometry>
+                <box size="0.05 0.05 0.05"/>
+            </geometry>
+        </visual>
+
+        <collision>
+            <geometry>
+                <box size="0.05 0.05 0.05"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1e-5"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0.0" iyy="1e-6" iyz="0.0" izz="1e-6"/>
+        </inertial>
+    </link>
+
+    <joint name="laser_scanner_joint" type="fixed">
+        <axis xyz="0.0 1 0.0"/>
+        <parent link="base_link"/>
+        <child link="laser_scanner"/>
+        <origin xyz="0.0 0.0 0.08" rpy="0.0 0.0 0.0"/>
+    </joint>
+<!--Gazebo param-->
+     <gazebo reference="laser_scanner">
+        <sensor type="ray" name="laser">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>true</visualize>
+            <update_rate>40</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>720</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-3.14</min_angle>
+                        <max_angle>3.14</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.1</min>
+                    <max>10</max>
+                    <resolution>0.1</resolution>
+                </range>
+            </ray>
+            <plugin name="Lidar" filename="libgazebo_ros_laser.so">
+                <topicName>/scan</topicName>
+                <frameName>laser_scanner</frameName>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+<!-- Gazebo plugins and materials -->
+<gazebo reference="base_link">
+<mu1>0.2</mu1>
+<mu2>0.2</mu2>
+
+    <material>Gazebo/Orange</material>
+</gazebo>
+
+<gazebo reference="front_castor_wheel_link">
+<mu1>0.2</mu1>
+<mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+</gazebo>
+<gazebo reference="right_wheel_link">
+<mu1>0.2</mu1>
+<mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+</gazebo>
+<gazebo reference="left_wheel_link">
+<mu1>0.2</mu1>
+<mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+</gazebo>
+<gazebo reference="gripper">
+    <material>Gazebo/Grey</material>
+</gazebo>
+
+<!-- Plugins for wheels, laser scanner, and other functionalities -->
+<gazebo>
+    <plugin name="messi_bot_controller" filename="libgazebo_ros_diff_drive.so">
+    <update_rate>100.0</update_rate>
+    <robotNamespace></robotNamespace>
+        <leftRearJoint>left_wheel_joint</leftRearJoint>
+        <rightRearJoint>right_wheel_joint</rightRearJoint>
+        <legacyMode>false</legacyMode>
+        <robotBaseFrame>base_link</robotBaseFrame>
+
+        <wheelSeparation>${body_link_y_dim+wheel_link_length}</wheelSeparation> <!-- Adjusted for reduced size -->
+        <wheelDiameter>${wheel_link_radius*2}</wheelDiameter> <!-- Adjusted for reduced size -->
+        <publishWheelJointState>true</publishWheelJointState>
+        <torque>1000</torque>
+        <commandTopic>cmd_vel</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <publishWheelTF>true</publishWheelTF>
+        <publishOdom>true</publishOdom>
+        <covariance_x>0.0001</covariance_x>
+        <covariance_y>0.0001</covariance_y>
+        <covariance_z>0.0001</covariance_z>
+    </plugin>
+</gazebo>
+<gazebo>
+    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+        <jointName>front_castor_wheel_joint</jointName>
+    </plugin>
+</gazebo>
+<gazebo>
+    <plugin name="gripper_controller" filename="libgazebo_ros_control.so">
+        <robotNamespace>/</robotNamespace>
+        <controlPeriod>0.001</controlPeriod>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <joint name="left_finger_joint">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <joint name="right_finger_joint">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+    </plugin>
+</gazebo>
+
+
+</robot>

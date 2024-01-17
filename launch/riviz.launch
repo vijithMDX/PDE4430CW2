@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <launch>
-    <param name="robot_description" textfile="$(find messi_bot)/urdf/rover.urdf"/>
-    <arg name="rviz_config_file" default="$(find messi_bot)/config/robot.rviz"/>
+    <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
+    <arg name="rviz_config_file" default="$(find messi_bot)/config/robot.rviz"/>-
     
     
     
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="join_state_publisher" pkg="joint_state_publisher" type="join_state_publisher"/>
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_file)"/>
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_file)"/>
     
 
-    
+   
+
+       
 
 </launch>
