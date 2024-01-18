@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot name="messi_bot">
 
-
     <!-- Base Link -->
     <link name="base_link">
         <visual>
@@ -19,7 +18,7 @@
         </collision>
         <inertial>
             <mass value="0.5"/>
-            <inertia ixx="0.003854167" ixy="0" ixz="0" iyy="0.003854167" iyz="0.0" izz="0.0075"/><!-- Adjusted Inertia -->
+            <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.0375" iyz="0.0" izz="0.0375"/><!-- Adjusted Inertia -->
         </inertial>
     </link>
 
@@ -39,8 +38,8 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="0.1"/>
-             <inertia ixx="0.000001667" ixy="0" ixz="0" iyy="0.000001667" iyz="0.0" izz="0.000001667"/> <!-- Adjusted Inertia -->
+            <mass value="0.05"/>
+             <inertia ixx="0.00083" ixy="0" ixz="0" iyy="0.00083" iyz="0.0" izz="0.000167"/> <!-- Adjusted Inertia -->
         </inertial>
     </link>
 
@@ -65,8 +64,8 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="0.1"/>
-           <inertia ixx="0.000012865" ixy="0" ixz="0" iyy="0.000012865" iyz="0.0" izz="0.000015313"/> <!-- Adjusted Inertia -->
+            <mass value="0.05"/>
+           <inertia ixx="5.1458e-5" ixy="0" ixz="0" iyy="5.1458e-5" iyz="0.0" izz="6.125e-5"/> <!-- Adjusted Inertia -->
         </inertial>
     </link>
 
@@ -83,7 +82,7 @@
         <geometry>
             <cylinder radius="0.0175" length="0.025"/> <!-- Halved size -->
         </geometry>
-        <material name="black"/> <color rgba="0.0 0.0 0.0"/>
+        <material name="black"/>
     </visual>
     <collision>
         <geometry>
@@ -91,8 +90,8 @@
         </geometry>
     </collision>
     <inertial>
-        <mass value="0.1"/>
-        <inertia ixx="0.000012865" ixy="0" ixz="0" iyy="0.000012865" iyz="0.0" izz="0.000015313"/> <!-- Adjusted Inertia -->
+        <mass value="0.05"/>
+        <inertia ixx="2.5729e-5" ixy="0" ixz="0" iyy="2.5729e-5" iyz="0.0" izz="3.0625e-5"/> <!-- Adjusted Inertia -->
     </inertial>
 </link>
 
@@ -117,8 +116,8 @@
         </geometry>
     </collision>
     <inertial>
-        <mass value="0.01"/>
-        <inertia ixx="0.000012865" ixy="0" ixz="0" iyy="0.000012865" iyz="0.0" izz="0.000015313"/><!-- Adjusted Inertia -->
+        <mass value="0.05"/>
+        <inertia ixx="2.5729e-5" ixy="0" ixz="0" iyy="2.5729e-5" iyz="0.0" izz="3.0625e-5"/> <!-- Adjusted Inertia -->
     </inertial>
 </link>
 
@@ -143,9 +142,9 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="0.1"/>
+            <mass value="0.01"/>
             
-           <inertia ixx="0.000003385" ixy="0" ixz="0.0" iyy="0.000336667" iyz="0.0" izz="0.000333385"/>
+           <inertia ixx="1e-6" ixy="0" ixz="0.0" iyy="1e-6" iyz="0.0" izz="1e-6"/>
         </inertial>
     </link>
 
@@ -163,7 +162,7 @@
             </geometry>
         </collision>
         <inertial>
-          <mass value="0.01"/>
+            <mass value="0.01"/>
              
           <inertia ixx="1e-6" ixy="0" ixz="0.0" iyy="1e-6" iyz="0.0" izz="1e-6"/>
         </inertial>
@@ -207,9 +206,7 @@
         </collision>
 
         <inertial>
-          
-
-   <mass value="1e-5"/>
+            <mass value="1e-5"/>
             <inertia ixx="1e-6" ixy="0" ixz="0.0" iyy="1e-6" iyz="0.0" izz="1e-6"/>
         </inertial>
     </link>
@@ -238,7 +235,7 @@
                 <range>
                     <min>0.1</min>
                     <max>10</max>
-                    <resolution>0.5</resolution>
+                    <resolution>0.1</resolution>
                 </range>
             </ray>
             <plugin name="Lidar" filename="libgazebo_ros_laser.so">
@@ -278,14 +275,6 @@
         <wheelSeparation>0.125</wheelSeparation> <!-- Adjusted for reduced size -->
         <wheelDiameter>0.035</wheelDiameter> <!-- Adjusted for reduced size -->
         <publishWheelJointState>true</publishWheelJointState>
-           <commandTopic>cmd_vel</commandTopic>
-        <odometryTopic>odom</odometryTopic>
-        <odometryFrame>odom</odometryFrame>
-        <publishWheelTF>true</publishWheelTF>
-        <publishOdom>true</publishOdom>
-        <covariance_x>0.0001</covariance_x>
-        <covariance_y>0.0001</covariance_y>
-        <covariance_z>0.0001</covariance_z>
     </plugin>
 </gazebo>
 <gazebo>

@@ -19,7 +19,6 @@
     <!--includes the defaults objects -->
     <include file="$(find messi_bot)/launch/objects.launch"/>
 
-      <param name="robot_description" textfile="$(find messi_bot)/urdf/mobile_bot.urdf"/>
    <!--adding map server load map in rviz-->
     <arg name="map_file" value="$(find messi_bot)/worlds/map_hd.yaml"></arg>
     <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"/>
